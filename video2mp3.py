@@ -1,9 +1,13 @@
+import os
 import sys
 
 import yt_dlp
 
+OUTPUT_DIR = "new_songs"
+
 
 def download_mp3(url: str) -> str:
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
     ydl_opts = {
         "format": "bestaudio/best",
         "postprocessors": [{
@@ -11,13 +15,13 @@ def download_mp3(url: str) -> str:
             "preferredcodec": "mp3",
             "preferredquality": "192",
         }],
-        "outtmpl": "%(title)s.%(ext)s",
+        "outtmpl": os.path.join(OUTPUT_DIR, "%(title)s.%(ext)s"),
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         title = info.get("title", "output")
-        return f"{title}.mp3"
+        return os.path.join(OUTPUT_DIR, f"{title}.mp3")
 
 
 if __name__ == "__main__":
